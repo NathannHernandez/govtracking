@@ -1,0 +1,78 @@
+import { Menu, X, Mail, Bell, User } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchUser } from 'redux/thunks/userThunks';
+// import { setUser } from '../redux/slice/counter/counterSlice';
+import { useEffect } from 'react';
+import type { RootState, AppDispatch } from '../redux/store'; // Adjust the path if your store file is elsewhere
+import { useNavigate } from 'react-router';
+
+
+
+// Top Navigation Component
+type TopNavbarProps = {
+  onMenuToggle: () => void;
+  isSidebarOpen: boolean;
+};
+
+const TopNavbar = ({ onMenuToggle, isSidebarOpen }: TopNavbarProps) => {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+
+
+  useEffect(() => {
+    dispatch(fetchUser())
+      .unwrap()
+      .catch(() => {
+        navigate('/login')
+      })
+    console.log("User:", user);
+  }, [dispatch, navigate])
+
+  return (
+    <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 h-16">
+      <div className="flex items-center justify-between h-full px-4">
+        {/* Left section */}
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={onMenuToggle}
+            className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
+          >
+            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <div className="text-xl font-bold text-gray-800">Brand</div>
+        </div>
+
+        {/* Center section - Search */}
+        {/* <div className="hidden md:flex flex-1 max-w-lg mx-8">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div> */}
+
+        {/* Right section */}
+        <div className="flex items-center space-x-3">
+          <button className="p-2 rounded-lg hover:bg-gray-100 relative">
+            <Bell size={20} className="text-gray-600" />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          <button className="p-2 rounded-lg hover:bg-gray-100">
+            <Mail size={20} className="text-gray-600" />
+          </button>
+          <div className="flex items-center space-x-2 pl-2 border-l border-gray-200">
+            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+              <User size={16} className="text-white" />
+            </div>
+            <span className="hidden md:block text-sm font-medium text-gray-700">{user.name}</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+export default TopNavbar;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import OfficePic from './office.jpg';
+import { useNavigate } from 'react-router-dom';
 
 export function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -8,13 +9,32 @@ export function Register() {
     email: '',
     password: ''
   });
+  const navigate = useNavigate();
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('http://localhost:3001/v1/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        navigate('/login'); // Redirect to login on successful registration
+      } else {
+        console.error('Registration failed');
+      }
+    } catch (err) {
+      console.error('Network error during registration', err);
+    }
+
+  }
   return (
     <main className="flex min-h-screen">
-      {/* Home Arrow Button - Top Left */}
+      {/* Home Arrow Button - Top Right */}
       <a
         href="/"
-        className="fixed top-6 left-6 z-50 group flex items-center justify-center w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200/50"
+        className="fixed top-6 right-6 z-50 group flex items-center justify-center w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200/50"
         title="Go to Home"
       >
         <svg 
@@ -41,7 +61,7 @@ export function Register() {
             <p className="text-gray-600">Join us to start tracking your assets</p>
           </div>
 
-          <div className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Name Field */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
@@ -125,7 +145,7 @@ export function Register() {
             >
               Create Account
             </button>
-          </div>
+          </form >
 
           {/* Login Link */}
           <div className="mt-8 pt-6 border-t border-gray-100">

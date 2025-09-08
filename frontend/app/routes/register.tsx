@@ -4,7 +4,7 @@ import { Register } from "~/Register/register";
 
 export function meta() {
   return [
-    { title: "Register" },
+    { title: "Register Page" },
     { name: "description", content: "Register to your account" },
   ];
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import OfficePic from './office.jpg';
-import { redirect } from "react-router";
+import { useNavigate } from 'react-router-dom';
 
 export function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,6 +9,7 @@ export function Login() {
     email: '',
     password: ''
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +29,7 @@ export function Login() {
         return;
       }
 
-      redirect('/dashboard');
+      navigate('/dashboard');
       // maybe redirect or store token
     } catch (err) {
       setErrorMessage('Network error. Please try again.');

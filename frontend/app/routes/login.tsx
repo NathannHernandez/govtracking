@@ -1,6 +1,13 @@
 import { useEffect } from "react";
 import { Login } from "~/Login/login";
 
+export function meta() {
+  return [
+    { title: "Login Page" },
+    { name: "description", content: "Register to your account" },
+  ];
+}
+
 export default function Home() {
 
   useEffect(() => {
