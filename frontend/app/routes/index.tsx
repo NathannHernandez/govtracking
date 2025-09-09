@@ -22,6 +22,8 @@ export default function Index() {
           }
         checkAuth();
       }, []); // run once on mount
+
+      
     return ( <IndexPage /> )
 
 }

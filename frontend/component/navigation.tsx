@@ -1,10 +1,7 @@
 import { Menu, X, Mail, Bell, User } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchUser } from 'redux/thunks/userThunks';
 // import { setUser } from '../redux/slice/counter/counterSlice';
-import { useEffect } from 'react';
-import type { RootState, AppDispatch } from '../redux/store'; // Adjust the path if your store file is elsewhere
-import { useNavigate } from 'react-router';
+import type { RootState } from '../redux/store'; // Adjust the path if your store file is elsewhere
+import { useSelector } from 'react-redux';
 
 
 
@@ -15,19 +12,8 @@ type TopNavbarProps = {
 };
 
 const TopNavbar = ({ onMenuToggle, isSidebarOpen }: TopNavbarProps) => {
-  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch<AppDispatch>();
 
-
-  useEffect(() => {
-    dispatch(fetchUser())
-      .unwrap()
-      .catch(() => {
-        navigate('/login')
-      })
-    console.log("User:", user);
-  }, [dispatch, navigate])
 
   return (
     <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 h-16">

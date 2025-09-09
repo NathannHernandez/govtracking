@@ -1,4 +1,4 @@
-import { Home, Users, Settings, BarChart, LogOut } from 'lucide-react';
+import { Home, FileText, Settings, FileInput, LogOut, IdCard } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,7 +20,9 @@ const Sidebar = ({ isOpen, onClose, updateSidebarOption }: SidebarProps) => {
    
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'busform', label: 'Bus Form', icon: Home },
+    { id: 'busform', label: 'Bus Form', icon: FileText },
+    { id: 'swdi', label: 'SWDI', icon: FileInput },
+    { id: 'PCN', label: 'PCN', icon: IdCard },
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'logout', label: 'Logout', icon: LogOut },
   ];
