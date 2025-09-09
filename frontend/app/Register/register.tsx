@@ -58,7 +58,7 @@ export function Register() {
           {/* Header */}
           <div className="mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">Create Account</h2>
-            <p className="text-gray-600">Join us to start tracking your assets</p>
+            <p className="text-gray-600">Join us to start tracking your work</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -183,7 +183,7 @@ export function Register() {
               </div>
               <h1 className="text-4xl font-bold mb-4">Join Our Platform</h1>
               <p className="text-xl text-black leading-relaxed">
-                Get started with powerful asset tracking and management tools
+                Get started with powerful work tracking and management tools
               </p>
             </div>
 
@@ -191,7 +191,7 @@ export function Register() {
               <div className="bg-white bg-opacity-10 rounded-xl p-6 text-left">
                 <div className="w-8 h-8 bg-black bg-opacity-20 rounded-lg mb-3"></div>
                 <h3 className="font-semibold mb-2">Complete Control</h3>
-                <p className="text-sm text-black">Full visibility and control over all your assets and inventory</p>
+                <p className="text-sm text-black">Full visibility and control over all your work</p>
               </div>
               <div className="bg-white bg-opacity-10 rounded-xl p-6 text-left">
                 <div className="w-8 h-8 bg-black bg-opacity-20 rounded-lg mb-3"></div>

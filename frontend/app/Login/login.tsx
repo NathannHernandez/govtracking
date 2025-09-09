@@ -86,7 +86,7 @@ export function Login() {
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                 <div className="w-8 h-8 bg-white/20 rounded-lg mb-3"></div>
                 <h3 className="font-semibold mb-1">Real-time Tracking</h3>
-                <p className="text-sm text-white/80">Live updates on all your assets</p>
+                <p className="text-sm text-white/80">Live updates on all your work</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                 <div className="w-8 h-8 bg-white/20 rounded-lg mb-3"></div>

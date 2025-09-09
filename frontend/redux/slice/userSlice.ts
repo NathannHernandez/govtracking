@@ -5,12 +5,14 @@ type UserState = {
   id: string
   name: string
   email: string
+  loading: boolean
 }
 
 const initialState: UserState = { 
   id: '', 
   name: '', 
-  email: '' 
+  email: '',
+  loading: false
 }
 
 const slice = createSlice({
@@ -18,12 +20,20 @@ const slice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(fetchUser.fulfilled, (state, action) => {
-      const { userId, username, email } = action.payload
-      state.id = userId
-      state.name = username
-      state.email = email
-    })
+    builder
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        const { userId, username, email } = action.payload
+        state.id = userId
+        state.name = username
+        state.email = email
+        state.loading = false
+      })
+      .addCase(fetchUser.rejected, (state) => {
+        state.loading = false
+      })
   }
 })
 

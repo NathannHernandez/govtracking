@@ -1,51 +1,82 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { ChevronUp, TrendingUp, Database, Activity, FileText, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from '../../redux/store'; // Adjust the path if your store file is elsewhere
+import { fetchBus } from 'redux/thunks/busThunks';
+import LoadingOverlay from './busLoading';
+
+
+
+type BusFormat = {
+  date: string
+  encoded: number
+  updated: number
+  issues: number
+}
 
 const EncodingDashboard = () => {
+  // Redux
+  const busData = useSelector((state: RootState) => state.bus);
+  const User = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+
+  // State
+
+  const [AllBus, setAllBus] = useState<BusFormat[]>([]);
   // Sample data - replace with your actual data
-  const [timeRange, setTimeRange] = useState('7d');
-  
-  const dailyEncodingData = [
-    { date: '2024-09-01', encoded: 145, issues: 34, updated: 21 },
-    { date: '2024-09-02', encoded: 189, issues: 13, updated: 32 },
-    { date: '2024-09-03', encoded: 167, issues: 53, updated: 62 },
-    { date: '2024-09-04', encoded: 203, issues: 52, updated: 72 },
-    { date: '2024-09-05', encoded: 178, issues: 42, updated: 12 },
-    { date: '2024-09-06', encoded: 192, issues: 16, updated: 35 },
-    { date: '2024-09-07', encoded: 234, issues: 68, updated: 23 },
-  ];
+  const [timeRange, setTimeRange] = useState('1d');
+
+  useEffect(() => {
+    if (User?.id) {
+      dispatch(fetchBus({ userId: User.id, days: timeRange.slice(0, -1) }))
+
+    }
+
+  }, [dispatch, User, timeRange])
+
+  useEffect(() => {
+    console.log(busData.dailyEncodingData)
+    if (busData) {
+      setAllBus(busData.dailyEncodingData)
+    }
+
+  }, [dispatch, busData])
+
 
   const encodingTypeData = [
-    { type: 'SWDI',name : "SWDI", count: 856, color: '#3B82F6' },
-    { type: 'BUS',name : "BUS", count: 432, color: '#10B981' },
-    { type: 'PCN',name : "PCN", count: 289, color: '#F59E0B' },
-    { type: 'Document',name : "SWDI", count: 167, color: '#EF4444' },
+    { type: 'SWDI', name: "SWDI", count: 856, color: '#3B82F6' },
+    { type: 'BUS', name: "BUS", count: 432, color: '#10B981' },
+    { type: 'PCN', name: "PCN", count: 289, color: '#F59E0B' },
+    { type: 'Document', name: "SWDI", count: 167, color: '#EF4444' },
   ];
 
-const recentEncodings = [
-  { id: 'Bus_1',   name: 'Alice Johnson',    type: 'Bus',   encoded: 'Yes',     hh_id: 'HH101', date: '2025-09-01' },
-  { id: 'PCN_1',   name: 'Michael Smith',    type: 'PCN',   encoded: 'No',      hh_id: 'HH102', date: '2025-09-02' },
-  { id: 'SWDI_1',  name: 'Sophia Lee',       type: 'SWDI',  encoded: 'Yes',     hh_id: 'HH103', date: '2025-09-03' },
-  { id: 'Bus_2',   name: 'James Brown',      type: 'Bus',   encoded: 'No',      hh_id: 'HH104', date: '2025-09-04' },
-  { id: 'PCN_2',   name: 'Emma Davis',       type: 'PCN',   encoded: 'Updated', hh_id: 'HH105', date: '2025-09-05' },
-  { id: 'SWDI_2',  name: 'Daniel Wilson',    type: 'SWDI',  encoded: 'Yes',     hh_id: 'HH106', date: '2025-09-06' },
-  { id: 'Bus_3',   name: 'Olivia Martinez',  type: 'Bus',   encoded: 'No',      hh_id: 'HH107', date: '2025-09-07' },
-  { id: 'PCN_3',   name: 'William Garcia',   type: 'PCN',   encoded: 'Yes',     hh_id: 'HH108', date: '2025-09-08' },
-  { id: 'SWDI_3',  name: 'Isabella Thomas',  type: 'SWDI',  encoded: 'Updated', hh_id: 'HH109', date: '2025-09-09' },
-]
+  const recentEncodings = [
+    { id: 'Bus_1', name: 'Alice Johnson', type: 'Bus', encoded: 'Yes', hh_id: 'HH101', date: '2025-09-01' },
+    { id: 'PCN_1', name: 'Michael Smith', type: 'PCN', encoded: 'No', hh_id: 'HH102', date: '2025-09-02' },
+    { id: 'SWDI_1', name: 'Sophia Lee', type: 'SWDI', encoded: 'Yes', hh_id: 'HH103', date: '2025-09-03' },
+    { id: 'Bus_2', name: 'James Brown', type: 'Bus', encoded: 'No', hh_id: 'HH104', date: '2025-09-04' },
+    { id: 'PCN_2', name: 'Emma Davis', type: 'PCN', encoded: 'Updated', hh_id: 'HH105', date: '2025-09-05' },
+    { id: 'SWDI_2', name: 'Daniel Wilson', type: 'SWDI', encoded: 'Yes', hh_id: 'HH106', date: '2025-09-06' },
+    { id: 'Bus_3', name: 'Olivia Martinez', type: 'Bus', encoded: 'No', hh_id: 'HH107', date: '2025-09-07' },
+    { id: 'PCN_3', name: 'William Garcia', type: 'PCN', encoded: 'Yes', hh_id: 'HH108', date: '2025-09-08' },
+    { id: 'SWDI_3', name: 'Isabella Thomas', type: 'SWDI', encoded: 'Updated', hh_id: 'HH109', date: '2025-09-09' },
+  ]
 
 
- 
+
 
   const totalStats = useMemo(() => {
-    const totalEncoded = dailyEncodingData.reduce((sum, day) => sum + day.encoded, 0);
-    const totalFailed = dailyEncodingData.reduce((sum, day) => sum + day.issues, 0);
-    const totalUpdated = dailyEncodingData.reduce((sum, day) => sum + day.updated, 0);
-    const successRate = ((totalEncoded / (totalEncoded + totalFailed)) * 100).toFixed(1);
-    
+    const totalEncoded = AllBus.reduce((sum, day) => sum + day.encoded, 0);
+    const totalFailed = AllBus.reduce((sum, day) => sum + day.issues, 0);
+    const totalUpdated = AllBus.reduce((sum, day) => sum + day.updated, 0);
+    const successRate = isNaN(totalEncoded / (totalEncoded + totalFailed))
+      ? 0
+      : ((totalEncoded / (totalEncoded + totalFailed)) * 100).toFixed(1)
+
+
     return { totalEncoded, totalFailed, totalUpdated, successRate };
-  }, [dailyEncodingData]);
+  }, [AllBus]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -56,7 +87,7 @@ const recentEncodings = [
     }
   };
 
-  const getStatusIcon = (status : string) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case 'Completed': return <CheckCircle className="w-4 h-4" />;
       case 'Processing': return <Clock className="w-4 h-4" />;
@@ -64,6 +95,10 @@ const recentEncodings = [
       default: return <Activity className="w-4 h-4" />;
     }
   };
+
+  if (busData.loading && User.loading) {
+    return <LoadingOverlay />
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -77,15 +112,14 @@ const recentEncodings = [
         {/* Time Range Selector */}
         <div className="mb-6">
           <div className="flex space-x-2">
-            {['24h', '7d', '30d', '90d'].map((range) => (
+            {['1d', '7d', '30d', '90d'].map((range) => (
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  timeRange === range
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${timeRange === range
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  }`}
               >
                 {range}
               </button>
@@ -111,7 +145,7 @@ const recentEncodings = [
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Encoded - temp</p>
+                <p className="text-sm font-medium text-gray-600">Encoded </p>
                 <p className="text-3xl font-bold text-gray-900">{totalStats.successRate}</p>
                 <p className="text-sm text-green-600 mt-1">↗ +0.8% from last week</p>
               </div>
@@ -153,7 +187,7 @@ const recentEncodings = [
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Daily Encoding Activity</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={dailyEncodingData}>
+              <AreaChart data={AllBus}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
@@ -177,7 +211,7 @@ const recentEncodings = [
                   fillOpacity={0.6}
                   name="issues"
                 />
-                  <Area
+                <Area
                   type="monotone"
                   dataKey="updated"
                   stackId="1"
@@ -215,7 +249,7 @@ const recentEncodings = [
             </ResponsiveContainer>
           </div>
         </div>
-{/* 
+        {/* 
         <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">System Performance (24h)</h3>
           <ResponsiveContainer width="100%" height={300}>

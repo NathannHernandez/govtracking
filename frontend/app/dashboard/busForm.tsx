@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Save, RefreshCw, FileText } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from '../../redux/store'; // Adjust the path if your store file is elsewhere
+import LoadingOverlay from './busLoading';
 
 type FormFields = {
   id: number;
+  username : string;
   lgu: string;
   barangay: string;
   hhId: string;
@@ -24,12 +28,6 @@ const UPDATE_TYPE_KEYMAP = {
   '6': 'Other'
 };
 
-const ENCODED_KEYMAP = {
-  'y': 'YES',
-  'Y': 'YES',
-  'n': 'No',
-  'N': 'No'
-};
 
 const ISSUE_KEYMAP = {
   '1': 'No Issue',
@@ -41,8 +39,13 @@ const ISSUE_KEYMAP = {
 };
 
 function BusForm() {
+  //Redux
+  const User = useSelector((state : RootState) => state.user)
+
+
   const [formData, setFormData] = useState<FormFields>({
-    id: 0,
+    id: Number(User.id),
+    username: User.name,
     lgu: '',
     barangay: '',
     hhId: '',
@@ -75,10 +78,16 @@ function BusForm() {
   }
 
   useEffect(() => {
-    const getRecentUpdates = fetch('http://localhost:3001/v1/bus', {
-      method: 'GET',
-      credentials: 'include'
+    const getRecentUpdates = fetch('http://localhost:3001/v1/bus/fetchAllBus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({id : 1})
     });
+
+    console.log(getRecentUpdates, "RECENTT")
     getRecentUpdates.then(async res => {
       if (res.ok) {
         const data = await res.json();
@@ -111,6 +120,8 @@ function BusForm() {
     //   return newUpdates.slice(0, 3);
     // });
 
+    console.log(payload, " PAY LOADS")
+
     const res = fetch('http://localhost:3001/v1/bus', {
       method: 'POST',
       headers: {
@@ -135,7 +146,8 @@ function BusForm() {
 
   const handleReset = () => {
     setFormData({
-      id: 0,
+      id: Number(User.id),
+      username: User.name,
       lgu: '',
       barangay: '',
       hhId: '',
@@ -159,16 +171,6 @@ function BusForm() {
     }
   };
 
-  const handleEncodedKeyDown = (e: React.KeyboardEvent) => {
-    const mappedValue = ENCODED_KEYMAP[e.key as keyof typeof ENCODED_KEYMAP];
-    if (mappedValue) {
-      e.preventDefault();
-      setFormData(prev => ({
-        ...prev,
-        encoded: mappedValue
-      }));
-    }
-  };
 
   const handleEdit = (id: number) => {
     const entryToEdit = recentUpdates.find(entry => (entry as any).id === id)
@@ -192,6 +194,10 @@ function BusForm() {
     'Contact Update',
     'Other'
   ];
+
+  if(User.loading){
+    return <LoadingOverlay />
+  }
 
 
   return (
@@ -371,12 +377,12 @@ function BusForm() {
                       required
                       value={formData.encoded}
                       onChange={handleInputChange}
-                      onKeyDown={handleEncodedKeyDown}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-black"
                     >
                       <option value="">Select</option>
                       <option value="YES">Yes</option>
                       <option value="NO">No</option>
+                      <option value="UPDATED">UPDATED</option>
                     </select>
                   </div>
 
