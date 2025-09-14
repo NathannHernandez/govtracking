@@ -16,7 +16,7 @@ export function Login() {
     setErrorMessage(''); // Reset any previous error
 
     try {
-      const res = await fetch('http://localhost:3001/v1/auth/login', {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

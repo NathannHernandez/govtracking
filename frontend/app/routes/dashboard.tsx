@@ -1,12 +1,10 @@
-
 import { useEffect } from "react";
-import  Dashboard  from "../dashboard/dashboard";
+import EncodingDashboard from "../dashboard/dashboard";
 import { useNavigate } from "react-router";
-import {  useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import type { AppDispatch } from "redux/store";
 import { fetchUser } from "redux/thunks/userThunks";
-
-
+import LayoutWrapper from "layout/navLayout";
 
 export function meta() {
   return [
@@ -16,19 +14,20 @@ export function meta() {
 }
 
 export default function DashboardRoute() {
-  const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
-  
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
   useEffect(() => {
     dispatch(fetchUser())
       .unwrap()
       .catch(() => {
-        navigate('/login')
-      })
-      console.log("DASHBOARD AUTH CHECK")
-  }, [dispatch, navigate])
+        navigate("/login");
+      });
+  }, [dispatch, navigate]);
 
-
-    return ( <Dashboard /> )
-
+  return (
+    <LayoutWrapper>
+      <EncodingDashboard />
+    </LayoutWrapper>
+  );
 }

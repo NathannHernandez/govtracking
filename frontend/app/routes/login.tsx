@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Login } from "~/Login/login";
+import { useNavigate } from "react-router";
 
 export function meta() {
   return [
@@ -9,16 +10,16 @@ export function meta() {
 }
 
 export default function Home() {
-
+  const navigate = useNavigate();
+  console.log(import.meta.env.VITE_BACKEND_API_URL);
   useEffect(() => {
     async function checkAuth() {
-        const res = await fetch("http://localhost:3001/v1/auth/check-auth", {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/check-auth`, {
           method: "GET",
           credentials: "include", //   ensures cookies are sent
         });
-        console.log(res);
         if (res.ok) {
-          window.location.href = "/dashboard";
+          navigate("/dashboard");
         } 
       }
     checkAuth();

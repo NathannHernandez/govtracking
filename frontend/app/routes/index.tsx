@@ -1,6 +1,6 @@
 import IndexPage from '../index/index';
 import { useEffect } from 'react';
-
+import { useNavigate } from 'react-router';
 export function meta() {
   return [
     { title: "Tracking System" },
@@ -9,15 +9,15 @@ export function meta() {
 }
 
 export default function Index() {
+    const navigate = useNavigate();
       useEffect(() => {
         async function checkAuth() {
             const res = await fetch("http://localhost:3001/v1/auth/check-auth", {
               method: "GET",
               credentials: "include", //   ensures cookies are sent
             });
-            console.log(res);
             if (res.ok) {
-              window.location.href = "/dashboard";
+              navigate("/dashboard");
             } 
           }
         checkAuth();

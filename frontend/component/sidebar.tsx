@@ -1,28 +1,38 @@
-import { Home, FileText, Settings, FileInput, LogOut, IdCard } from 'lucide-react';
-import { useState } from 'react';
+import { Home, FileText, Settings, FileInput, LogOut, IdCard, BookText, ClipboardCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useLocation } from "react-router-dom"
 import { useNavigate } from 'react-router-dom';
 
 // Sidebar Navigation Component
 type SidebarProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    updateSidebarOption: (option: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
+  updateSidebarOption: (option: string) => void;
 };
 
 const Sidebar = ({ isOpen, onClose, updateSidebarOption }: SidebarProps) => {
-    const navigate = useNavigate();
-   const [activeItem, setActiveItem] = useState('dashboard');
+  const location = useLocation()
+  const [activeItem, setActiveItem] = useState(location.pathname.replace("/", ""))
+  const navigate = useNavigate();
 
-   const updateSidebar = (option: string) => {
+  const updateSidebar = (option: string) => {
     setActiveItem(option);
+    navigate(`/${option}`)
     updateSidebarOption(option);
-   }
-   
+  }
+
+  //  useEffect(()=>{
+  //   console.log(activeItem, "ACTIVEE")
+  //   navigate(`/${activeItem}`)
+  //  },[activeItem])
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'busform', label: 'Bus Form', icon: FileText },
+    { id: 'bus', label: 'Bus', icon: FileText },
     { id: 'swdi', label: 'SWDI', icon: FileInput },
     { id: 'PCN', label: 'PCN', icon: IdCard },
+    { id: 'records', label: 'Records', icon: BookText },
+    { id: 'summary', label: 'Summary', icon: ClipboardCheck },
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'logout', label: 'Logout', icon: LogOut },
   ];
@@ -40,7 +50,7 @@ const Sidebar = ({ isOpen, onClose, updateSidebarOption }: SidebarProps) => {
       {/* Sidebar - Now sticks to left side */}
       <aside
         className={`
-          fixed top-0 left-0 max-h-[100%] w-64 bg-gray-50 border-r border-gray-200 z-40 transform transition-transform duration-300 flex flex-col
+          fixed top-0 left-0 h-screen w-64 bg-gray-50 border-r border-gray-200 z-40 transform transition-transform duration-300 flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:relative lg:z-0
         `}

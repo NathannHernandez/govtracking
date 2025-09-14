@@ -11,6 +11,9 @@ import {
 } from 'react-router';
 import type { Route } from './+types/root';
 import './app.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -44,9 +47,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function Root() {
+  const queryClient = new QueryClient()
   return (
     <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+
       <Outlet />
+      </QueryClientProvider>
     </Provider>
   );
 }
