@@ -26,7 +26,10 @@ export default function SwdiRecent() {
   const { data: recentSwdi, isLoading, error, refetch } = useQuery<SWDIFormFields[]>({
     queryKey: ['recentSwdi', user.id],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3001/v1/swdi/recent?id=${user.id}`)
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/recent?id=${user.id}`,{
+                method: 'GET',
+                credentials: 'include',
+            })
       if (!res.ok) throw new Error('Network response was not ok')
       return res.json()
     },

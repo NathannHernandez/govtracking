@@ -86,11 +86,11 @@ function PCNForm() {
         }
 
         const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/insert`, {
-        //const res = await fetch('http://localhost:3001/v1/pcn/insert', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(payload),
         });
 

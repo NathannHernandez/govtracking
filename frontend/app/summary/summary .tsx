@@ -76,7 +76,10 @@ export default function EncodingSummary() {
   const { data: summaryData, isLoading } = useQuery<SummaryStats>({
     queryKey: ["encodingSummary", user.id, selectedPeriod],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3001/v1/encoded/monthlystats?id=${user.id}&month=${getPeriodDates(selectedPeriod)}`)
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/monthlystats?id=${user.id}&month=${getPeriodDates(selectedPeriod)}`,{
+                method: 'GET',
+                credentials: 'include',
+            })
       if (!res.ok) throw new Error("Error fetching summary data")
       return res.json()
     },
@@ -86,7 +89,10 @@ export default function EncodingSummary() {
   const { data: recentDocuments } = useQuery<EncodedDocument[]>({
     queryKey: ["recentDocuments", user.id, selectedPeriod],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3001/v1/encoded/recentmonthlystats?id=${user.id}&month=${getPeriodDates(selectedPeriod)}`)
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/recentmonthlystats?id=${user.id}&month=${getPeriodDates(selectedPeriod)}`,{
+                method: 'GET',
+                credentials: 'include',
+            })
       if (!res.ok) throw new Error("Error fetching recent documents")
       return res.json()
     },
@@ -96,7 +102,10 @@ export default function EncodingSummary() {
   const { data: todaysSummary } = useQuery<TodaysSummary>({
     queryKey: ["todaysSummary", user.id],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3001/v1/encoded/recentmonthlystats?id=${user.id}&date=${getPeriodDates(selectedPeriod)}`)
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/recentmonthlystats?id=${user.id}&date=${getPeriodDates(selectedPeriod)}`,{
+                method: 'GET',
+                credentials: 'include',
+            })
       if (!res.ok) throw new Error("Error fetching today's summary")
       return res.json()
     },

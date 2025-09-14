@@ -77,7 +77,10 @@ export default function DataSearchFilter() {
   const { data: busData = [], isLoading: busLoading, refetch: refetchBus } = useQuery<BusData[]>({
     queryKey: ['busData', user.id],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/records?id=${user.id}`);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/records?id=${user.id}`,{
+                method: 'GET',
+                credentials: 'include',
+            });
       if (!res.ok) throw new Error('Network response was not ok');
       return res.json();
     },
@@ -88,7 +91,10 @@ export default function DataSearchFilter() {
   const { data: swdiData = [], isLoading: swdiLoading, refetch: refetchSwdi } = useQuery<SwdiData[]>({
     queryKey: ['swdiData', user.id],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/records?id=${user.id}`);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/records?id=${user.id}`,{
+                method: 'GET',
+                credentials: 'include',
+            });
       if (!res.ok) throw new Error('Network response was not ok');
       return res.json();
     },
@@ -99,7 +105,10 @@ export default function DataSearchFilter() {
   const { data: pcnData = [], isLoading: pcnLoading, refetch: refetchPcn } = useQuery<PcnData[]>({
     queryKey: ['pcnData', user.id],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/records?id=${user.id}`);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/records?id=${user.id}`,{
+                method: 'GET',
+                credentials: 'include',
+            });
       if (!res.ok) throw new Error('Network response was not ok');
       return res.json();
     },

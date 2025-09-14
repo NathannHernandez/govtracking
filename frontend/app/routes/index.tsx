@@ -12,7 +12,7 @@ export default function Index() {
     const navigate = useNavigate();
       useEffect(() => {
         async function checkAuth() {
-            const res = await fetch("http://localhost:3001/v1/auth/check-auth", {
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/check-auth`, {
               method: "GET",
               credentials: "include", //   ensures cookies are sent
             });

@@ -15,11 +15,18 @@ const Sidebar = ({ isOpen, onClose, updateSidebarOption }: SidebarProps) => {
   const [activeItem, setActiveItem] = useState(location.pathname.replace("/", ""))
   const navigate = useNavigate();
 
-  const updateSidebar = (option: string) => {
-    setActiveItem(option);
-    navigate(`/${option}`)
-    updateSidebarOption(option);
+const updateSidebar = (option: string) => {
+  setActiveItem(option);
+
+  if (option === "logout") {
+    navigate("/login");
+  } else {
+    navigate(`/${option}`);
   }
+
+  updateSidebarOption(option);
+};
+
 
   //  useEffect(()=>{
   //   console.log(activeItem, "ACTIVEE")

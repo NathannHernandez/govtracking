@@ -28,7 +28,7 @@ const statusMap: Record<EncodedDocument['encoded'], { color: string; icon: JSX.E
 
 
 const fetchData = async (url: string) => {
-  const res = await fetch(url);
+  const res = await fetch(url, { credentials: 'include' , method: 'GET' });
   const data = await res.json();
   return Array.isArray(data) ? data : [];
 };

@@ -83,7 +83,7 @@ function SWDIForm() {
             date: new Date(formData.date).toISOString()
         }
 
-        const res = fetch('http://localhost:3001/v1/swdi/insert', {
+        const res = fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/insert`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

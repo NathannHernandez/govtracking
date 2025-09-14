@@ -29,6 +29,7 @@ const Pending = () => {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/pending?id=${user.id}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
             })
             return res.json()
         },
@@ -40,6 +41,7 @@ const Pending = () => {
             return fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ encoded, issue }),
             })
         },

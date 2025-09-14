@@ -28,7 +28,10 @@ export default function PcnRecent() {
   const { data: recentPcn, isLoading, refetch } = useQuery<Pcn[]>({
     queryKey: ["recentPcn", user.id],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/recent?id=${user.id}`)
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/recent?id=${user.id}`,{
+                method: 'GET',
+                credentials: 'include',
+            })
       if (!res.ok) console.log("Error fetching recent PCN data")
       return res.json()
     },

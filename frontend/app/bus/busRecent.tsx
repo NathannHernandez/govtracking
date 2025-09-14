@@ -28,7 +28,10 @@ export default function RecentTable() {
   const { data: recentUpdates, isLoading, error, refetch } = useQuery<FormFields[]>({
     queryKey: ['recentBus', user.id],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/recent?id=${user.id}`)
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/recent?id=${user.id}`,{
+        method: 'GET',
+        credentials: 'include',
+      })
       if (!res.ok) throw new Error('Network response was not ok')
       return res.json()
     },

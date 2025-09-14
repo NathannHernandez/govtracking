@@ -61,8 +61,11 @@ export default function BlankCalendar({ selectedPeriod }: BlankCalendarProps) {
           ? `${year}`
           : `${year}-${month.toString().padStart(2, "0")}`;
       const res = await fetch(
-        `http://localhost:3001/v1/encoded/recentmonthlyeverydaystats?id=${user.id}&month=${monthParam}`
-      );
+        `${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/recentmonthlyeverydaystats?id=${user.id}&month=${monthParam}`
+      ,{
+                method: 'GET',
+                credentials: 'include',
+            });
       if (!res.ok) throw new Error("Error fetching daily stats");
       return res.json();
     },
@@ -74,8 +77,11 @@ export default function BlankCalendar({ selectedPeriod }: BlankCalendarProps) {
     queryFn: async () => {
       const yearParam = year.toString();
       const res = await fetch(
-        `http://localhost:3001/v1/encoded/getYearlyTotal?id=${user.id}&year=${yearParam}`
-      );
+        `${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/getYearlyTotal?id=${user.id}&year=${yearParam}`
+      ,{
+                method: 'GET',
+                credentials: 'include',
+            });
       if (!res.ok) throw new Error("Error fetching monthly totals");
       return res.json();
     },
