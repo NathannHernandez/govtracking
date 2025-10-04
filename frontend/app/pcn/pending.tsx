@@ -1,8 +1,9 @@
 import { useQuery, useMutation } from "@tanstack/react-query"
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "redux/store"
+import { useSelector } from "react-redux"
+import type { RootState } from "redux/store"
 import { Copy, X, Edit3, Check } from "lucide-react"
 import React from "react"
+import { get, post} from '../../component/fetchComponent'
 
 export type Pcn = {
     id: number
@@ -20,37 +21,30 @@ export type Pcn = {
 }
 
 const Pending = () => {
-    const dispatch = useDispatch<AppDispatch>()
-    const user = useSelector((state: RootState) => state.user)
+    const User = useSelector((state: RootState) => state.user)
 
-    const { data: pendingPCN, refetch } = useQuery<Pcn[]>({
-        queryKey: ["pendingPCN"],
-        queryFn: async () => {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/pending?id=${user.id}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-            })
-            return res.json()
-        },
-        enabled: !!user.id,
-    })
-
-    const mutation = useMutation({
-        mutationFn: async ({ id, encoded, issue }: { id: number; encoded: string; issue?: string }) => {
-            return fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ encoded, issue }),
-            })
-        },
-        onSuccess: () => refetch(),
-    })
 
     const [editingId, setEditingId] = React.useState<number | null>(null)
     const [editValue, setEditValue] = React.useState<string>("")
     const [editIssueValue, setEditIssueValue] = React.useState<string>("")
+
+    const { data: pendingPCN, refetch } = useQuery<Pcn[]>({
+        queryKey: ["pendingPCN"],
+        queryFn: async (): Promise <Pcn[]> => {
+            const data = await get(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/pending?id=${User.id}`, User.csrf)
+            return data as Pcn[]
+        },
+        enabled: !!User.id,
+    })
+
+    const mutation = useMutation({
+        mutationFn: async ({ id, encoded, issue }: { id: number; encoded: string; issue?: string }) => {
+            const data = await post(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/${id}`, {id, encoded, issue}, User.csrf)
+            return data
+        },
+        onSuccess: () => refetch(),
+    })
+
 
     const handleEditEncoded = (id: number, currentValue: string) => {
         setEditingId(id)
@@ -71,9 +65,8 @@ const Pending = () => {
         setEditIssueValue("")
     }
 
-    if (!user) return <div className="p-6">Please log in to view pending PCN records.</div>;
+    if (!User) return <div className="p-6">Please log in to view pending PCN records.</div>;
 
-    console.log('Rendering Pending component with user ID:', user.id);
 
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex-1 overflow-hidden">

@@ -1,29 +1,41 @@
 import IndexPage from '../index/index';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { useQuery } from "@tanstack/react-query"
+import { get } from "component/fetchComponent"
+
+type User = {
+  logged_in: boolean
+}
 export function meta() {
   return [
-    { title: "Tracking System" },
+    { title: "NathRacker" },
     { name: "description", content: "Register to your account" },
   ];
 }
 
 export default function Index() {
-    const navigate = useNavigate();
-      useEffect(() => {
-        async function checkAuth() {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/check-auth`, {
-              method: "GET",
-              credentials: "include", //   ensures cookies are sent
-            });
-            if (res.ok) {
-              navigate("/dashboard");
-            } 
-          }
-        checkAuth();
-      }, []); // run once on mount
+  const navigate = useNavigate();
 
-      
-    return ( <IndexPage /> )
+
+  const { data: check_auth_public, isLoading } = useQuery<User>({
+    queryKey: ["checkAuthPublic"],
+    queryFn: () =>
+      get<User>(`${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/check-auth-public`),
+    staleTime: 1000 * 60, 
+  })
+  
+  useEffect(() => {
+    if (check_auth_public?.logged_in) {
+      navigate("/dashboard")
+    }
+  }, [check_auth_public, navigate])
+
+  if (isLoading) return null 
+
+  if (check_auth_public?.logged_in) return null 
+
+
+  return (<IndexPage />)
 
 }

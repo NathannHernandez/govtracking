@@ -1,7 +1,12 @@
 import { Home, FileText, Settings, FileInput, LogOut, IdCard, BookText, ClipboardCheck } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocation } from "react-router-dom"
 import { useNavigate } from 'react-router-dom';
+import { get } from './fetchComponent';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from 'redux/store';
+import { setLogout } from 'redux/slice/userSlice';
+
 
 // Sidebar Navigation Component
 type SidebarProps = {
@@ -11,27 +16,11 @@ type SidebarProps = {
 };
 
 const Sidebar = ({ isOpen, onClose, updateSidebarOption }: SidebarProps) => {
+  const dispatch = useDispatch()
+  const User = useSelector((state : RootState)=> state.user)
   const location = useLocation()
   const [activeItem, setActiveItem] = useState(location.pathname.replace("/", ""))
   const navigate = useNavigate();
-
-const updateSidebar = (option: string) => {
-  setActiveItem(option);
-
-  if (option === "logout") {
-    navigate("/login");
-  } else {
-    navigate(`/${option}`);
-  }
-
-  updateSidebarOption(option);
-};
-
-
-  //  useEffect(()=>{
-  //   console.log(activeItem, "ACTIVEE")
-  //   navigate(`/${activeItem}`)
-  //  },[activeItem])
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
@@ -44,12 +33,31 @@ const updateSidebar = (option: string) => {
     { id: 'logout', label: 'Logout', icon: LogOut },
   ];
 
+  const updateSidebar = (option: string) => {
+    setActiveItem(option);
+
+    if (option === "logout") {
+      logout();
+      dispatch(setLogout())
+    } else {
+      navigate(`/${option}`);
+    }
+
+    updateSidebarOption(option);
+  };
+
+  const logout = async () => {
+    const data = await get(`${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/logout`)
+    if(!data) return
+    navigate('/login');
+  }
+
   return (
     <>
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          className="fixed inset-0 backdrop-blur-sm z-30 lg:hidden"
           onClick={onClose}
         ></div>
       )}
@@ -57,7 +65,7 @@ const updateSidebar = (option: string) => {
       {/* Sidebar - Now sticks to left side */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen w-64 bg-gray-50 border-r border-gray-200 z-40 transform transition-transform duration-300 flex flex-col
+          fixed top-0 left-0 h-screen text-black w-64 bg-gray-50 border-r border-gray-200 z-40 transform transition-transform duration-300 flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:relative lg:z-0
         `}
@@ -109,4 +117,4 @@ const updateSidebar = (option: string) => {
 };
 
 
-export default Sidebar;
+export default Sidebar;2

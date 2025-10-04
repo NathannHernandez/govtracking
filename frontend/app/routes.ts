@@ -10,4 +10,7 @@ export default [
   route("pcn", "routes/pcn.tsx"),
   route("records", "routes/records.tsx"),
   route("summary", "routes/summary.tsx"),
+  route("settings", "routes/settings.tsx"),
+  route("404", "routes/notAuthorized.tsx"),
+
 ] satisfies RouteConfig;

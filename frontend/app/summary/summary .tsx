@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import BlankCalendar from "./monthlyEncoded"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "redux/store"
-import { Calendar, TrendingUp, FileText, Award, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Calendar, TrendingUp, FileText, Award, ChevronDown } from "lucide-react"
+import { useState } from "react"
+import { get } from "component/fetchComponent"
+import { setSelectedMonth } from "redux/slice/summary/summerySlice"
 
 export type EncodedDocument = {
   id: number
@@ -31,109 +33,49 @@ export type TodaysSummary = {
   }
 }
 
+function getYearMonth(month?: number | string) {
+  const now = new Date();
+  let date = now;
+  const m = Number(month);
+
+  if (m >= 1 && m <= 12) {
+    date = new Date(now.getFullYear(), m - 1, 1);
+  }
+
+  return `${date.getFullYear()}-${date.getMonth() + 1}`;
+}
+
+
 export default function EncodingSummary() {
-  const user = useSelector((state: RootState) => state.user)
-  const [selectedPeriod, setSelectedPeriod] = useState<'thisMonth' | 'lastMonth' | 'last3Months' | 'thisYear'>('thisMonth')
+  const dispatch = useDispatch()
+  const User = useSelector((state: RootState) => state.user)
+  const Selectedmonth = useSelector((state: RootState) => state.summary.selectedMonth)
+  const [selectedPeriod, setSelectedPeriod] = useState<string>(Selectedmonth) // Default to January
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 25
-
-  const periodOptions = {
-    thisMonth: 'This Month',
-    lastMonth: 'Last Month',
-    last3Months: 'Last 3 Months',
-    thisYear: 'This Year'
-  }
-
-  function getPeriodDates(option: typeof selectedPeriod) {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-
-    switch (option) {
-      case 'thisMonth':
-        return `${year}-${month}`;
-      case 'lastMonth': {
-        const last = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        return `${last.getFullYear()}-${(last.getMonth() + 1).toString().padStart(2, '0')}`;
-      }
-      case 'last3Months': {
-        const last3 = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-        return `${last3.getFullYear()}-${(last3.getMonth() + 1).toString().padStart(2, '0')}`;
-      }
-      case 'thisYear':
-        return `${year}`;
-      default:
-        return `${year}-${month}`;
-    }
-  }
-
-  function getTodaysDate() {
-    const now = new Date();
-    return now.toISOString().split('T')[0];
-  }
 
   const { data: summaryData, isLoading } = useQuery<SummaryStats>({
-    queryKey: ["encodingSummary", user.id, selectedPeriod],
+    queryKey: ["encodingSummary", selectedPeriod],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/monthlystats?id=${user.id}&month=${getPeriodDates(selectedPeriod)}`,{
-                method: 'GET',
-                credentials: 'include',
-            })
-      if (!res.ok) throw new Error("Error fetching summary data")
-      return res.json()
+      const data = await get(`${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/monthlystats?id=${User.id}&month=${getYearMonth(selectedPeriod)}`)
+
+      return data as SummaryStats
     },
-    enabled: !!user.id,
+    enabled: !!User.id
   })
 
-  const { data: recentDocuments } = useQuery<EncodedDocument[]>({
-    queryKey: ["recentDocuments", user.id, selectedPeriod],
-    queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/recentmonthlystats?id=${user.id}&month=${getPeriodDates(selectedPeriod)}`,{
-                method: 'GET',
-                credentials: 'include',
-            })
-      if (!res.ok) throw new Error("Error fetching recent documents")
-      return res.json()
-    },
-    enabled: !!user.id,
-  })
-
-  const { data: todaysSummary } = useQuery<TodaysSummary>({
-    queryKey: ["todaysSummary", user.id],
-    queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/encoded/recentmonthlystats?id=${user.id}&date=${getPeriodDates(selectedPeriod)}`,{
-                method: 'GET',
-                credentials: 'include',
-            })
-      if (!res.ok) throw new Error("Error fetching today's summary")
-      return res.json()
-    },
-    enabled: !!user.id,
-    refetchInterval: 5 * 60 * 1000,
-  })
-
-  useEffect(() => {
-  }, [recentDocuments])
-
-  const getDocumentTypes = (): string[] => {
-    if (!summaryData) return []
-    return Object.keys(summaryData.documentsByType || {})
-  }
-
-  const getDaysInMonth = (year: number, month: number) => {
-    const days = new Date(year, month, 0).getDate()
-    return Array.from({ length: days }, (_, i) => {
-      const dateObj = new Date(year, month - 1, i + 1)
-      return {
-        day: i + 1,
-        date: dateObj.toISOString().split('T')[0],
-        dayName: dateObj.toLocaleDateString('en-US', { weekday: 'short' }),
-        isToday: dateObj.toDateString() === new Date().toDateString(),
-        isPast: dateObj < new Date(),
-        isFuture: dateObj > new Date()
-      }
-    })
+  const monthOptions = {
+    '1': 'January',
+    '2': 'February',
+    '3': 'March',
+    '4': 'April',
+    '5': 'May',
+    '6': 'June',
+    '7': 'July',
+    '8': 'August',
+    '9': 'September',
+    '10': 'October',
+    '11': 'November',
+    '12': 'December'
   }
 
   const dailyStats: Record<string, Record<string, Record<string, number>>> = {}
@@ -141,24 +83,6 @@ export default function EncodingSummary() {
     const { date, ...rest } = day
     dailyStats[date] = rest as Record<string, Record<string, number>>
   })
-
-  const dailyStatsByDate = summaryData?.dailyStats?.reduce((acc, day) => {
-    let total = 0;
-    if (typeof day.total === "number") {
-      total = day.total;
-    } else if (typeof day.total === "object" && day.total !== null) {
-      total = Object.values(day.total).reduce((sum, val) => sum + (typeof val === "number" ? val : 0), 0);
-    }
-    acc[day.date] = { total };
-    return acc;
-  }, {} as Record<string, { total: number }>) || {}
-
-  const totalPages = Math.ceil((recentDocuments?.length || 0) / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const currentDocuments = recentDocuments?.slice(startIndex, endIndex) || []
-
-  useEffect(() => { setCurrentPage(1) }, [selectedPeriod])
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -190,93 +114,8 @@ export default function EncodingSummary() {
       </div>
     </div>
   )
-  const docTypes = getDocumentTypes();
-  const dailyStatsMap = summaryData?.dailyStats?.reduce((acc, day) => {
-    acc[day.date] = day;
-    return acc;
-  }, {} as Record<string, any>) || {};
 
-  const period = getPeriodDates(selectedPeriod);
-  const [year, month] = selectedPeriod === 'thisYear'
-    ? [parseInt(period, 10), new Date().getMonth() + 1]
-    : period.split('-').map(Number);
-
-  const daysInMonth = getDaysInMonth(year, month);
-  const monthTotals = docTypes.reduce((acc, docType) => {
-    acc[docType] = Object.values(dailyStatsMap).reduce((sum, day) => {
-      const typeData = day[docType] || {};
-      return sum + Object.values(typeData).reduce((s: number, c) => s + (typeof c === "number" ? c : 0), 0);
-    }, 0);
-    return acc;
-  }, {} as Record<string, number>);
-
-  const overallMonthTotal = Object.values(monthTotals).reduce((sum, count) => sum + count, 0);
-
-
-
-  const PaginationControls = () => (
-    <div className="flex items-center justify-between mt-4 px-4 py-3 bg-gray-50 border-t border-gray-200">
-      <div className="flex items-center gap-2 text-sm text-gray-700">
-        <span>
-          Showing {startIndex + 1}-{Math.min(endIndex, recentDocuments?.length || 0)} of {recentDocuments?.length || 0} results
-        </span>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-          disabled={currentPage === 1}
-          className="flex items-center gap-1 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <ChevronLeft size={16} />
-          Previous
-        </button>
-
-        <div className="flex items-center gap-1">
-          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            const pageNum = i + 1
-            return (
-              <button
-                key={pageNum}
-                onClick={() => setCurrentPage(pageNum)}
-                className={`px-3 py-1 text-sm border rounded ${currentPage === pageNum
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'border-gray-300 hover:bg-gray-100'
-                  }`}
-              >
-                {pageNum}
-              </button>
-            )
-          })}
-          {totalPages > 5 && (
-            <>
-              <span className="px-2 text-gray-500">...</span>
-              <button
-                onClick={() => setCurrentPage(totalPages)}
-                className={`px-3 py-1 text-sm border rounded ${currentPage === totalPages
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'border-gray-300 hover:bg-gray-100'
-                  }`}
-              >
-                {totalPages}
-              </button>
-            </>
-          )}
-        </div>
-
-        <button
-          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-          disabled={currentPage === totalPages}
-          className="flex items-center gap-1 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Next
-          <ChevronRight size={16} />
-        </button>
-      </div>
-    </div>
-  )
-
-  if (!user.id) {
+  if (!User.id) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-gray-500">Please log in to view your encoding summary.</div>
@@ -299,17 +138,19 @@ export default function EncodingSummary() {
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <Calendar size={16} />
-            {periodOptions[selectedPeriod]}
+            {monthOptions[selectedPeriod as keyof typeof monthOptions]}
             <ChevronDown size={16} />
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-              {Object.entries(periodOptions).map(([key, label]) => (
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+              {Object.entries(monthOptions).map(([key, label]) => (
                 <button
                   key={key}
                   onClick={() => {
-                    setSelectedPeriod(key as typeof selectedPeriod)
+                    setSelectedPeriod(key)
+
+                    dispatch(setSelectedMonth(key))
                     setDropdownOpen(false)
                   }}
                   className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${selectedPeriod === key ? "bg-blue-50 text-blue-600" : ""
@@ -321,7 +162,6 @@ export default function EncodingSummary() {
             </div>
           )}
         </div>
-
       </div>
 
       {isLoading ? (
@@ -330,7 +170,6 @@ export default function EncodingSummary() {
         </div>
       ) : (
         <>
-
           {/* Summary Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard
@@ -343,7 +182,7 @@ export default function EncodingSummary() {
 
             <StatCard
               title="Completed"
-              value={summaryData?.documentsByStatus?.['YES'] || summaryData?.documentsByStatus?.['                                         '] || 0}
+              value={summaryData?.documentsByStatus?.['YES'] || summaryData?.documentsByStatus?.[''] || 0}
               subtitle="Successfully encoded"
               icon={Award}
               color="green"
@@ -366,8 +205,6 @@ export default function EncodingSummary() {
               color="orange"
             />
           </div>
-
-
 
           {/* Document Types Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -426,8 +263,7 @@ export default function EncodingSummary() {
           </div>
 
           {/* Calendar */}
-          <BlankCalendar selectedPeriod={selectedPeriod} />
-
+          <BlankCalendar />
         </>
       )}
     </div>

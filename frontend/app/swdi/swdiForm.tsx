@@ -2,63 +2,37 @@ import React, { useEffect, useState } from 'react';
 import { Save, RefreshCw, FileText } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux'
 import type { RootState, AppDispatch } from '../../redux/store';
-import LoadingOverlay from './overlayLoading';
 import SwdiRecent from './swdiRecent';
 import { setNewData } from 'redux/slice/swdi/swdiSlice';
-
-
-type SWDIFormFields = {
-    username: string;
-    hhId: string;
-    grantee: string;
-    swdiScore: string;
-    encoded: string;
-    issue: string;
-    date: string;
-    userId: number
-};
-
+import type { SWDIFormFields } from '~/types/swdiTypes';
 
 
 function SWDIForm() {
     // Redux
-    const User = useSelector((state: RootState) => state.user)
     const Swdi = useSelector((state: RootState) => state.swdi)
     const dispatch = useDispatch<AppDispatch>()
 
     const [formData, setFormData] = useState<SWDIFormFields>({
-        userId: Number(User.id),
-        username: User.name,
         hhId: '',
         grantee: '',
         swdiScore: '',
         encoded: '',
         issue: '',
-        date: new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())).toISOString().split('T')[0]
-    });
+        date: new Date().toISOString().split("T")[0] // ✅ input-compatible
+    })
 
-
+    //================================================
+    //      Load the selected item in the recent table
+    //================================================
     useEffect(() => {
         if (!Swdi.currentSwdi) return
-        const { id, createdAt, updatedAt, ...rest } = Swdi.currentSwdi
         setFormData(prev => ({
             ...prev,
-            ...rest,   // update other fields
-            date: prev.date // keep the date as-is
+            ...Swdi.currentSwdi,    
+            date : prev.date,
+            issue: Swdi.currentSwdi.issue ?? ""
         }))
     }, [Swdi.currentSwdi])
-
-        useEffect(() => {
-            if (User.id && User.name) {
-                setFormData(prev => ({
-                    ...prev,
-                    userId: Number(User.id),
-                    username: User.name,
-                }))
-            }
-        }, [User])
-    
-
 
 
     const handleInputChange = (
@@ -71,56 +45,49 @@ function SWDIForm() {
         }))
     }
 
-
-
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        // const { id, ...rest } = formData
+        // Convert `YYYY-MM-DD` back to full ISO string
+        const isoDate = new Date(formData.date).toISOString()
 
         const payload = {
             ...formData,
-            date: new Date(formData.date).toISOString()
+            date: isoDate
         }
 
-        const res = fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/insert`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/insert`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify(payload)
-        });
+        })
 
-        const data = await (await res).json();
-        if (!(await res).ok) {
-            console.error('Failed to submit SWDI form', data);
-            return;
+        const data = await res.json()
+        
+        // add Error text in frontend in the future
+        if (!res.ok) {
+            console.error('Failed to submit SWDI form', data)
+            return
         }
 
-        dispatch(setNewData(true))
-
-        // Reset form after submission
-        handleReset();
+        dispatch(setNewData(true)) // set true to activate the refetch from other component
+        handleReset()
     }
+
+
 
     const handleReset = () => {
         setFormData({
-            userId: Number(User.id),
-            username: User.name,
             hhId: '',
             grantee: '',
             swdiScore: '',
             encoded: '',
             issue: '',
-            date: new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())).toISOString().split('T')[0]
-        });
-    };
-
-
-    if (User.loading) {
-        return <LoadingOverlay />
+            date: new Date().toISOString().split("T")[0]
+        })
     }
+
 
     return (
         <div className="max-h-screen overflow-y-auto">

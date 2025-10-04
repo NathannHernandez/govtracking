@@ -1,58 +1,36 @@
 import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "redux/store"
 import { setCurrentData, setNewData } from "redux/slice/bus/busSlice"
 import { useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { Copy } from "lucide-react"
-
-type FormFields = {
-  id: number
-  userId: number
-  username: string
-  lgu: string
-  barangay: string
-  hhId: string
-  granteeName: string
-  typeOfUpdate: string
-  encoded: string
-  issue: string
-  subjectOfChange: string
-  date: string
-}
+import { get } from "component/fetchComponent"
+import type { AppDispatch, RootState } from "redux/store"
+import type { FormFields } from "~/types/busTypes"
 
 export default function RecentTable() {
-  const user = useSelector((state: RootState) => state.user)
+  const User = useSelector((state: RootState) => state.user)
   const busNewData = useSelector((state: RootState) => state.bus.newData)
   const dispatch = useDispatch<AppDispatch>()
 
   const { data: recentUpdates, isLoading, error, refetch } = useQuery<FormFields[]>({
-    queryKey: ['recentBus', user.id],
-    queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/recent?id=${user.id}`,{
-        method: 'GET',
-        credentials: 'include',
-      })
-      if (!res.ok) throw new Error('Network response was not ok')
-      return res.json()
+    queryKey: ['recentBus', User],
+    queryFn: async (): Promise<FormFields[]> => {
+      const data = await get(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/recent`)
+      return data as FormFields[]
     },
-    enabled: !!user.id
   })
+
 
   const handleEdit = (id: number) => {
     const entryToEdit = recentUpdates?.find(entry => entry.id === id)
+
     if (!entryToEdit) return
 
-    const { date, ...rest } = entryToEdit
-    const dt = new Date(date)
-    const formatted =
-      `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}T` +
-      `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`
+    const { userId, username, createdAt, updatedAt, date, id: _, ...formFields } = entryToEdit
 
-    dispatch(setCurrentData({
-      ...rest,
-      date: formatted
-    }))
+    dispatch(setCurrentData(formFields))
   }
+
 
   useEffect(() => {
     if (busNewData) {
@@ -60,6 +38,7 @@ export default function RecentTable() {
       dispatch(setNewData(false))
     }
   }, [busNewData])
+
 
   if (error) return <p>Error loading recent updates</p>
 

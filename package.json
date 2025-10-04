@@ -3,8 +3,8 @@
     "concurrently": "^9.2.1"
   },
   "scripts": {
-    "dev": "concurrently \"cd backend && npm run start:dev\" \"cd frontend && npm run dev\"",
-    "build": "concurrently \"cd backend && npm run build && npx prisma db push\" \"cd frontend && npm run build\"",
-    "start": "concurrently \"cd backend && npm run start:prod\" \"cd frontend && npm run preview\""
+    "dev": "concurrently -k \"cd frontend && npm run dev\" \"cd backend && npm run start:dev\"",
+    "build": "concurrently -k \"cd frontend && npm run build\" \"cd backend && npm run build && npx prisma db push\"",
+    "start": "concurrently -k \"cd frontend && npm run preview\" \"cd backend && npm run start:prod\""
   }
 }

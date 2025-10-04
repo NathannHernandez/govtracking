@@ -1,25 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Save, RefreshCw, FileText, Edit3, Check, X, Copy } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Save, RefreshCw, FileText } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { usePcn } from 'component/pcnMutation';
+import type { PcnFields } from '~/types/pcnTypes';
+import type { RootState } from 'redux/store';
 import Pending from './pending';
 import Encoded from './encoded';
 import PcnRecent from './recentPcn';
-import type { RootState } from 'redux/store';
-import LoadingOverlay from './overlayLoading';
-
-type PcnFields = {
-    userId : number;
-    username: string;
-    hhId: string;
-    grantee: string;
-    pcn: string;
-    tr: string;
-    issue: string;
-    date: string;
-    encoded: string;
-};
-
-
+import LoadingOverlay from 'component/overlayLoading';
 
 
 const encodedOptions = [
@@ -29,6 +17,7 @@ const encodedOptions = [
     "YES"]
 
 function PCNForm() {
+    const pcnMutation = usePcn()
 
     const User = useSelector((state: RootState) => state.user);
 
@@ -58,7 +47,6 @@ function PCNForm() {
     }, [User])
 
 
-
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
@@ -69,14 +57,11 @@ function PCNForm() {
         }))
     }
 
-
-
     const handleSubmit = async () => {
         if (!formData.pcn && !formData.tr) {
             setError("You must enter at least a PCN or TR")
             return
         }
-
         setError("")
 
         const {  ...rest } = formData
@@ -85,24 +70,8 @@ function PCNForm() {
             date: new Date(formData.date).toISOString(),
         }
 
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/insert`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify(payload),
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-            setError(data.message || 'Failed to submit. Please try again.');
-            return;
-        }
-        
-
-        console.log("Form submitted:", payload);
-
+        pcnMutation.mutate(payload)
+    
         //handleReset()
     }
 
@@ -120,20 +89,8 @@ function PCNForm() {
         });
     };
 
+    if (!User.id) return <LoadingOverlay />
 
-    if (User.loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="text-lg">Loading...</div>
-            </div>
-        );
-    }
-
-    if (!User.id) {
-        return (
-            <LoadingOverlay />
-        )
-    }
 
     return (
         <div className="max-h-screen overflow-y-auto">

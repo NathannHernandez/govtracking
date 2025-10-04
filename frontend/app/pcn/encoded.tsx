@@ -1,36 +1,27 @@
-import { useQuery, useMutation } from "@tanstack/react-query"
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "redux/store"
+import { useQuery } from "@tanstack/react-query"
+import { useSelector } from "react-redux"
 import { Copy } from "lucide-react"
-import React from "react"
-
-export type Pcn = {
-    id: number
-    hhId: string
-    grantee: string
-    pcn: string
-    tr: string
-    encoded: "YES" | "NO" | "UPDATED" | "PENDING"
-    issue?: string
-    date: string
-    userId: number
-    username: string
-    createdAt?: string
-    updatedAt?: string
-}
+import { get } from "component/fetchComponent"
+import LoadingOverlay  from "component/overlayLoading"
+import type { Pcn } from "~/types/pcnTypes"
+import type { RootState } from "redux/store"
 
 const Encoded = () => {
-    const dispatch = useDispatch<AppDispatch>()
     const user = useSelector((state: RootState) => state.user)
 
-    const { data: encodedPCN } = useQuery<Pcn[]>({
-        queryKey: ["encodedPCN"],
-        queryFn: async () => {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/encoded?id=${user.id}`)
-            return res.json()
+    const { data: encodedPCN, isLoading } = useQuery<Pcn[]>({
+        queryKey: ["encodedPCN", user],
+        queryFn: async (): Promise<Pcn[]> => {
+            const data = await get(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/encoded?id=${user.id}`)
+
+            return data as Pcn[]
         },
         enabled: !!user.id,
     })
+
+    if (isLoading) {
+        return (<LoadingOverlay />)
+    }
 
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex-1 overflow-hidden">
@@ -91,10 +82,10 @@ const Encoded = () => {
                                             <td className="px-3 py-2 text-center">
                                                 <span
                                                     className={`px-2 py-1 rounded text-xs ${entry.encoded === "YES"
-                                                            ? "bg-green-100 text-green-800"
-                                                            : entry.encoded === "UPDATED"
-                                                                ? "bg-blue-100 text-blue-800"
-                                                                : "bg-red-100 text-red-800"
+                                                        ? "bg-green-100 text-green-800"
+                                                        : entry.encoded === "UPDATED"
+                                                            ? "bg-blue-100 text-blue-800"
+                                                            : "bg-red-100 text-red-800"
                                                         }`}
                                                 >
                                                     {entry.encoded}

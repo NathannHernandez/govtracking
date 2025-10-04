@@ -1,6 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchBus, fetchRecentBus } from '../../thunks/busThunks'
 
+type BusForm = {
+  lgu: string;
+  barangay: string;
+  hhId: string;
+  granteeName: string;
+  typeOfUpdate: string;
+  encoded: string;
+  issue: string;
+  subjectOfChange: string;
+};
+
 type BusField = {
   id: number;
   userId: number;
@@ -14,6 +25,8 @@ type BusField = {
   issue: string;
   subjectOfChange: string;
   date: string;
+  createdAt: string
+  updatedAt: string
 };
 
 
@@ -27,7 +40,7 @@ type Bus = {
 type BusState = {
   recentBus : BusField[]
   dailyEncodingData: Bus[]
-  currentData: BusField | null
+  currentData: BusForm | null
   loading: boolean
   newData : boolean
 }
@@ -36,9 +49,6 @@ const initialState: BusState = {
   recentBus: [],
   dailyEncodingData: [],
   currentData: {
-    id: 0,
-    userId: 0,
-    username: '',
     lgu: '',
     barangay: '',
     hhId: '',
@@ -46,8 +56,7 @@ const initialState: BusState = {
     typeOfUpdate: '',
     encoded: '',
     issue: '',
-    subjectOfChange: '',
-    date: ''
+    subjectOfChange: ''
   },
   loading: true,
   newData : false
@@ -57,7 +66,7 @@ const slice = createSlice({
   name: 'bus',
   initialState,
   reducers: {
-    setCurrentData: (state, action: { payload: BusField }) => {
+    setCurrentData: (state, action: { payload: BusForm }) => {
       state.currentData = action.payload
     },
     setNewData: (state, action: { payload: boolean }) => {
@@ -80,7 +89,7 @@ const slice = createSlice({
         state.loading = true
       })
       .addCase(fetchRecentBus.fulfilled, (state, action) => {
-        console.log(action.payload)
+      
         state.recentBus = action.payload
         state.loading = false
       })

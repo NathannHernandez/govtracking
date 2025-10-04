@@ -1,28 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Save, RefreshCw, FileText } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
-import type { RootState, AppDispatch } from '../../redux/store'
-import LoadingOverlay from './busLoading'
-import { fetchRecentBus } from 'redux/thunks/busThunks'
-import RecentTable from './busRecent'
 import { setNewData } from 'redux/slice/bus/busSlice'
-
-type FormFields = {
-  id: number
-  userId: number
-  username: string
-  lgu: string
-  barangay: string
-  hhId: string
-  granteeName: string
-  typeOfUpdate: string
-  encoded: string
-  issue: string
-  subjectOfChange: string
-  date: string
-  createdAt?: string
-  updatedAt?: string
-}
+import { post } from 'component/fetchComponent'
+import type { BusFormFields } from '~/types/busTypes'
+import type { RootState, AppDispatch } from '../../redux/store'
+import RecentTable from './busTableRecent'
 
 const UPDATE_TYPE_KEYMAP: Record<string, string> = {
   '1': 'New Registration',
@@ -39,34 +22,13 @@ const UPDATE_TYPE_KEYMAP: Record<string, string> = {
 };
 
 
-const ISSUE_KEYMAP = {
-  '1': 'No Issue',
-  '2': 'Missing Documents',
-  '3': 'Invalid Information',
-  '4': 'Duplicate Entry',
-  '5': 'System Error',
-  '6': 'Other'
-}
-
 function BusForm() {
+
   const dispatch = useDispatch<AppDispatch>()
-  const User = useSelector((state: RootState) => state.user)
-  const recentBus = useSelector((state: RootState) => state.bus.recentBus)
+  
   const currentBusForm = useSelector((state: RootState) => state.bus.currentData)
 
-  const updateTypeOptions = [
-    'New Registration',
-    'Profile Update',
-    'Status Change',
-    'Address Change',
-    'Contact Update',
-    'Other'
-  ]
-
-  const [formData, setFormData] = useState<FormFields>({
-    id: 0,
-    userId: Number(User.id),
-    username: User.name,
+  const [formData, setFormData] = useState<BusFormFields>({
     lgu: '',
     barangay: '',
     hhId: '',
@@ -76,7 +38,6 @@ function BusForm() {
     issue: '',
     subjectOfChange: '',
     date: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`
-
   })
 
   const handleInputChange = (
@@ -91,49 +52,26 @@ function BusForm() {
 
   useEffect(() => {
     if (!currentBusForm) return
-    const { date, ...rest } = currentBusForm
     setFormData(prev => ({
       ...prev,
-      ...rest,   // update other fields
-      date: prev.date // keep the date as-is
+      ...currentBusForm,
+      issue: currentBusForm.issue ?? ""   // make sure it's not null
     }))
   }, [currentBusForm])
-
-  useEffect(() => {
-    if (!User || !User.id) return
-    setFormData(prev => ({
-      ...prev,
-      userId: Number(User.id),
-      username: User.name
-    }))
-  }, [User])
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const { createdAt, updatedAt, id, ...rest } = formData
+
+    if (!formData.date) return
 
     const payload = {
-      ...rest,
+      ...formData,
       date: new Date(formData.date).toISOString()
     }
 
-    console.log(payload, ' PAY LOADS')
 
-    const res = fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/insert`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(payload)
-    })
-
-    const data = await (await res).json()
-    if (!(await res).ok) {
-      console.error('Failed to submit form', data)
-      return
-    }
+    await post(`${import.meta.env.VITE_BACKEND_API_URL}/v1/bus/insert`, payload)
 
     dispatch(setNewData(true))
     handleReset()
@@ -141,9 +79,6 @@ function BusForm() {
 
   const handleReset = () => {
     setFormData({
-      id: 0,
-      userId: Number(User.id),
-      username: User.name,
       lgu: '',
       barangay: '',
       hhId: '',
@@ -159,10 +94,6 @@ function BusForm() {
         .split('T')[0]
     })
   }
-
-
-
-  if (User.id === '0') return <LoadingOverlay />
 
   return (
     <div className="max-h-screen overflow-y-auto">

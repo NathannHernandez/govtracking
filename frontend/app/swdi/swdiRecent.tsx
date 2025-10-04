@@ -4,51 +4,37 @@ import type { AppDispatch, RootState } from "redux/store";
 import { setCurrentSwdi, setNewData } from "redux/slice/swdi/swdiSlice";
 import { useEffect } from "react";
 import { Copy } from "lucide-react"
-
-
-type SWDIFormFields = {
-  id: number
-  username: string;
-  hhId: string;
-  grantee: string;
-  swdiScore: string;
-  encoded: string;
-  issue: string;
-  date: string;
-  userId: number
-};
+import { get } from "component/fetchComponent";
+import type { SwdiData } from "~/types/swdiTypes";
 
 export default function SwdiRecent() {
   const dispatch = useDispatch<AppDispatch>()
-  const user = useSelector((state: RootState) => state.user)
   const newSwdiData = useSelector((state: RootState) => state.swdi.newData)
 
-  const { data: recentSwdi, isLoading, error, refetch } = useQuery<SWDIFormFields[]>({
-    queryKey: ['recentSwdi', user.id],
+  const { data: recentSwdi, isLoading, error, refetch } = useQuery<SwdiData[]>({
+    queryKey: ['recentSwdi'],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/recent?id=${user.id}`,{
-                method: 'GET',
-                credentials: 'include',
-            })
-      if (!res.ok) throw new Error('Network response was not ok')
-      return res.json()
-    },
-    enabled: !!user.id
+      const data = await get(`${import.meta.env.VITE_BACKEND_API_URL}/v1/swdi/recent`)
+      return data as SwdiData[]
+    }
   })
 
   const handleEdit = (id: number) => {
     const entryToEdit = recentSwdi?.find(entry => entry.id === id)
     if (!entryToEdit) return
 
-    const { date, ...rest } = entryToEdit
+    const { date, createdAt,updatedAt,id : _, userId, username, ...rest } = entryToEdit
     const dt = new Date(date)
     const formatted =
       `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}T` +
       `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`
 
+
+     console.log({...rest}) 
     dispatch(setCurrentSwdi({
       ...rest,
-      date: formatted
+      issue : "",
+      date : ""
     }))
   }
 

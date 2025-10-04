@@ -12,6 +12,7 @@ type TopNavbarProps = {
 };
 
 const TopNavbar = ({ onMenuToggle, isSidebarOpen }: TopNavbarProps) => {
+  
   const user = useSelector((state: RootState) => state.user);
 
 
@@ -22,7 +23,7 @@ const TopNavbar = ({ onMenuToggle, isSidebarOpen }: TopNavbarProps) => {
         <div className="flex items-center space-x-4">
           <button
             onClick={onMenuToggle}
-            className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
+            className="p-2 rounded-lg text-black hover:bg-gray-100 lg:hidden"
           >
             {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>

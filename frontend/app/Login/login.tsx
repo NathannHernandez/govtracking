@@ -1,40 +1,37 @@
 import { useState } from 'react';
 import OfficePic from './office.jpg';
 import { useNavigate } from 'react-router-dom';
+import { useLogin } from 'component/authMutation';
 
 export function Login() {
+
+
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  
   const navigate = useNavigate();
+  const login = useLogin()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(''); // Reset any previous error
-
-    try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        setErrorMessage(errorData.message || 'Login failed. Please try again.');
-        return;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setErrorMessage("")
+    login.mutate(
+      formData,
+      {
+        onSuccess: (data) => {
+          navigate("/dashboard")  
+        },
+        onError: () => {
+          setErrorMessage("Invalid email or password")
+        }
       }
+    )
+  }
 
-      navigate('/dashboard');
-      // maybe redirect or store token
-    } catch (err) {
-      setErrorMessage('Network error. Please try again.');
-    }
-  };
 
   return (
     <main className="flex min-h-screen bg-slate-50">
@@ -44,24 +41,24 @@ export function Login() {
         className="fixed top-6 right-6 z-50 group flex items-center justify-center w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200/50"
         title="Go to Home"
       >
-        <svg 
-          className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors"
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" 
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
           />
         </svg>
       </a>
 
       {/* Left: Gradient Background with Pattern */}
       <div className="hidden md:block md:w-1/2 h-screen relative overflow-hidden">
-      
+
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700"></div>
         {/* Animated Background Pattern */}
         <img
@@ -185,6 +182,8 @@ export function Login() {
             </div>
 
             {/* Submit Button */}
+
+            { }
             <button
               type="submit"
               className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"

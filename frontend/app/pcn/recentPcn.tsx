@@ -4,6 +4,8 @@ import type { AppDispatch, RootState } from "redux/store"
 import { Copy } from "lucide-react"
 import { useEffect } from "react"
 import { setNewData } from "redux/slice/pcn/pcnSlice"
+import { get } from "component/fetchComponent"
+
 
 export type Pcn = {
   id: number
@@ -22,20 +24,16 @@ export type Pcn = {
 
 export default function PcnRecent() {
   const dispatch = useDispatch<AppDispatch>()
-  const user = useSelector((state: RootState) => state.user)
+  const User = useSelector((state: RootState) => state.user)
   const newPcnData = useSelector((state: RootState) => state.pcn.newData)
 
   const { data: recentPcn, isLoading, refetch } = useQuery<Pcn[]>({
-    queryKey: ["recentPcn", user.id],
-    queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/recent?id=${user.id}`,{
-                method: 'GET',
-                credentials: 'include',
-            })
-      if (!res.ok) console.log("Error fetching recent PCN data")
-      return res.json()
+    queryKey: ["recentPcn", User],
+    queryFn: async ():Promise <Pcn[]> => {
+      const data = await get(`${import.meta.env.VITE_BACKEND_API_URL}/v1/pcn/recent?id=${User.id}`)
+      return data as Pcn[]
     },
-    enabled: !!user.id,
+    enabled: !!User.id,
   })
 
   useEffect(() => {
