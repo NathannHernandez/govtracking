@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+////////////////////////////////////////
+// GENERATORS & DATASOURCES
+////////////////////////////////////////
+generator client {
+  provider = "prisma-client-js"
+  //output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+///////////////////////////////////////
+// ENUMS
+//////////////////////////////////////
+
+enum theme {
+  LIGHT
+  DARK
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+///////////////////////////////////////
+// MODELS
+//////////////////////////////////////
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  role      Role     @default(USER)
+
+  busById           Bus[]             @relation("UserById")
+  busByUsername     Bus[]             @relation("UserByUsername")
+  swdiById          Swdi[]            @relation("UserById")
+  swdiByUsername    Swdi[]            @relation("UserByUsername")
+  pcnByID           Pcn[]             @relation("UserById")
+  pcnByUsername     Pcn[]             @relation("UserByUsername")
+  encDocByID        EncodedDocument[] @relation("UserById")
+  encDocByUsername  EncodedDocument[] @relation("UserByUsername")
+  SessionByID       Session[]         @relation("UserById")
+  SessionByusername Session[]         @relation("UserByUsername")
+}
+
+model Session {
+  id                 Int     @id @default(autoincrement())
+  userId             Int
+  username           String
+  refresh_token_hash String
+  device_info        String?
+  ip_adress          String?
+
+  userById       User @relation("UserById", fields: [userId], references: [id])
+  userByUsername User @relation("UserByUsername", fields: [username], references: [username])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserInfo {
+  id                Int     @id @default(autoincrement())
+  userId            Int     @unique
+  firstName         String  @default("")
+  lastName          String  @default("")
+  phone             String  @default("")
+  email             String
+  username          String
+  sessionTime       String  @default("30")
+  language          String  @default("ENGLISH")
+  timezone          String  @default("UTC")
+  twoFactorAuth     Boolean @default(false)
+  smsAlert          Boolean @default(false)
+  loginAlert        Boolean @default(false)
+  SecuritAlert      Boolean @default(false)
+  emailAlert        Boolean @default(false)
+  weeklyReportAlert Boolean @default(false)
+  theme             theme   @default(DARK)
+}
+
+model Bus {
+  id              Int      @id @default(autoincrement())
+  lgu             String
+  barangay        String
+  hhId            String
+  granteeName     String
+  typeOfUpdate    String
+  encoded         String
+  issue           String?
+  subjectOfChange String
+  date            DateTime
+
+  userId   Int
+  username String
+
+  userById       User @relation("UserById", fields: [userId], references: [id])
+  userByUsername User @relation("UserByUsername", fields: [username], references: [username])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Swdi {
+  id        Int      @id @default(autoincrement())
+  hhId      String
+  grantee   String
+  swdiScore String
+  encoded   String
+  issue     String?
+  date      DateTime
+
+  userId   Int
+  username String
+
+  userById       User @relation("UserById", fields: [userId], references: [id])
+  userByUsername User @relation("UserByUsername", fields: [username], references: [username])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Pcn {
+  id      Int      @id @default(autoincrement())
+  hhId    String
+  grantee String
+  pcn     String?  @unique
+  tr      String?
+  encoded String
+  issue   String?
+  date    DateTime
+
+  userId   Int
+  username String
+
+  userById       User @relation("UserById", fields: [userId], references: [id])
+  userByUsername User @relation("UserByUsername", fields: [username], references: [username])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EncodedDocument {
+  id           Int    @id @default(autoincrement())
+  hhId         String
+  name         String
+  documentType String
+  documentId   Int // the ID of the original document (Bus, SWDI, PCN)
+  encoded      String
+
+  userId   Int
+  username String
+
+  date DateTime
+
+  userById       User @relation("UserById", fields: [userId], references: [id])
+  userByUsername User @relation("UserByUsername", fields: [username], references: [username])
+
+  createdAt DateTime @default(now())
+
+  @@index([hhId])
+}
