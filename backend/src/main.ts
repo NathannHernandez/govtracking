@@ -58,7 +58,7 @@ async function bootstrap() {
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: false,
-    allowedHeaders: ['Content-Type', 'Authorization', 'credentials', 'X-CSRF-TOKEN'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'credentials', 'X-CSRF-Token'],
   });
 
   const port = config.get<number>('PORT') || 3000;

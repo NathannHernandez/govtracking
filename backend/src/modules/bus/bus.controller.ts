@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query , Req} from '@nestjs/common';
 import { BusService } from './bus.service';
 import { CreateBusDto } from './dto/create-bus.dto';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
 import type { Request } from 'express';
+import { CsrfGuard } from 'src/guard/csrf-guard';
 
-@UseGuards(JwtOrRefreshGuard)
+@UseGuards(JwtOrRefreshGuard,CsrfGuard)
 @Controller('bus')
 export class BusController {
   constructor(private readonly busService: BusService) { }

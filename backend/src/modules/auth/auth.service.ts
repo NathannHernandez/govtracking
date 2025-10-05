@@ -16,7 +16,6 @@ type jwtPayload = {
   role : string
 }
 
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -71,6 +70,7 @@ export class AuthService {
       await this.redis.set(
       `session:${refreshTokenHash}`,
         JSON.stringify({
+          userId: user.id,
           refreshToken: refreshTokenHash,
           csrf_token: csrfTokenHash,
           ip: ip,
@@ -82,12 +82,20 @@ export class AuthService {
         60 * 60 * 24 * 7, // 7 days
       )
 
+      await res.cookie('access_token', this.jwtService.sign(payload), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: true,
+        path: '/',
+        maxAge: 5 * 60 * 1000,
+      });
+
       await res.cookie('refresh', refreshTokenHash, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: true,
         path: '/',
-        maxAge:  60 * 60 * 24 * 7, // 7 days
+        maxAge: 60 * 60 * 24 * 7 * 1000, // ✅ 7 days in milliseconds
       });
 
 
@@ -160,7 +168,7 @@ export class AuthService {
   //                     CHECK AUTH FOR PUBLIC PAGES
   // ======================================================
   async check_auth_public(req: Request) {
-    const token = req.cookies.refresh_token
+    const token = req.cookies.access_token
     //console.log("Token : ", token)
     if (!token) return { logged_in: false }
     return { logged_in: true }
@@ -169,6 +177,7 @@ export class AuthService {
   async check_auth(req: Request) {
     try {
       const token = req.user;
+      //const verify_token = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
       //console.log("Token:", token);
       if (!token) throw new Error("No user token found");
       return token;
@@ -193,7 +202,7 @@ export class AuthService {
         path: '/',
       });
 
-      res.clearCookie('refresh_token', {
+      res.clearCookie('refresh', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: true,

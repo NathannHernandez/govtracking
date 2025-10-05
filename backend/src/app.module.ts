@@ -13,7 +13,7 @@ import { UserModule } from './modules/user/user.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { TestController } from './app.controller';
 import { SettingModule } from './modules/setting/setting.module';
-import { JwtOrRefreshGuard } from './jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from './guard/jwt-refresh-guard';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -36,12 +36,12 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       global: true, // optional: makes JwtService available everywhere
       secret: process.env.JWT_SECRET || 'secretKey',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '5min' },
     }),
     ThrottlerModule.forRoot([
       {
-        ttl: 10000, // mili
-        limit: 1000,  
+        ttl: 60, // mili
+        limit: 100,  
       }
     ]),
     AuthModule,

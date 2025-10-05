@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PcnController } from './pcn.controller';
 import { PcnService } from './pcn.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext } from '@nestjs/common';
 

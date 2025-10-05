@@ -5,8 +5,7 @@ type UserState = {
   username: string
   email: string
   role: string
-  csrf: string
-  access_token: string
+  csrf_token: string
   loading: boolean
 } 
 

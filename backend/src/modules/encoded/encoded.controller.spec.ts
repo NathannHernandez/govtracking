@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EncodedController } from './encoded.controller';
 import { EncodedService } from './encoded.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
 import {  ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 

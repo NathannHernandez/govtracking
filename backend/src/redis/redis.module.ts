@@ -11,7 +11,7 @@ import { Global } from '@nestjs/common'
         RedisModule.forRoot({
             type: 'single',
             options: {
-                host: 'localhost',
+                host:'localhost',
                 port: 6379,
             },
         }),

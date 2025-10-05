@@ -1,10 +1,9 @@
 import { Controller, Get, Param, UseGuards, Query } from '@nestjs/common';
 import { EncodedService } from './encoded.service';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
+import { CsrfGuard } from 'src/guard/csrf-guard';
 
-
-
-@UseGuards(JwtOrRefreshGuard)
+@UseGuards(JwtOrRefreshGuard,CsrfGuard)
 @Controller('encoded')
 export class EncodedController {
   constructor(private readonly encodedService: EncodedService) { }

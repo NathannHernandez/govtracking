@@ -24,8 +24,6 @@ export default function DashboardRoute() {
   useEffect(() => {
      //console.log("User : ", user)
     const tryFetch = async () => {
-      if (user.id !== '') return; // Skip if user data is already available
-
       try {
         await dispatch(fetchUser()).unwrap();
       } catch {
@@ -44,6 +42,7 @@ export default function DashboardRoute() {
     tryFetch();
   }, [user.role]);
 
+  console.log("User Role : ", user.role)
 
   if (!user.role) {
     return null // still loading user, render nothing

@@ -3,7 +3,7 @@ import { SwdiController } from './swdi.controller';
 import { SwdiService } from './swdi.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Reflector } from '@nestjs/core';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
 import { ExecutionContext } from '@nestjs/common';
 
 describe('SwdiController', () => {

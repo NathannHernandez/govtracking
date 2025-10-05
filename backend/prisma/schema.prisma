@@ -51,24 +51,9 @@ model User {
   pcnByUsername     Pcn[]             @relation("UserByUsername")
   encDocByID        EncodedDocument[] @relation("UserById")
   encDocByUsername  EncodedDocument[] @relation("UserByUsername")
-  SessionByID       Session[]         @relation("UserById")
-  SessionByusername Session[]         @relation("UserByUsername")
+ 
 }
 
-model Session {
-  id                 Int     @id @default(autoincrement())
-  userId             Int
-  username           String
-  refresh_token_hash String
-  device_info        String?
-  ip_adress          String?
-
-  userById       User @relation("UserById", fields: [userId], references: [id])
-  userByUsername User @relation("UserByUsername", fields: [username], references: [username])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model UserInfo {
   id                Int     @id @default(autoincrement())
@@ -135,7 +120,7 @@ model Pcn {
   id      Int      @id @default(autoincrement())
   hhId    String
   grantee String
-  pcn     String?  @unique
+  pcn     String?  
   tr      String?
   encoded String
   issue   String?

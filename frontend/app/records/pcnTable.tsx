@@ -92,7 +92,7 @@ export function PcnTable() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => refetch()}
-                            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-black font-medium rounded-lg transition-colors duration-200 shadow-sm"
                             disabled={isLoading}
                         >
                             <svg className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@ export function PcnTable() {
 
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors duration-200"
+                            className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium rounded-lg transition-colors duration-200"
                         >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
@@ -112,7 +112,7 @@ export function PcnTable() {
                         </button>
                     </div>
 
-                    <div className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
+                    <div className="text-sm text-black bg-gray-50 px-3 py-2 rounded-lg">
                         Showing {paginatedData.length} of {filteredData.length} records
                     </div>
                 </div>
@@ -120,20 +120,20 @@ export function PcnTable() {
                 {/* Filters Panel */}
                 {showFilters && (
                     <div className="mt-6 pt-6 border-t border-gray-200">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 text-black lg:grid-cols-3 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                                <label className="block text-sm font-medium text-black mb-2">Search</label>
                                 <input
                                     type="text"
                                     value={filters.search}
                                     onChange={(e) => handleFilterChange('search', e.target.value)}
                                     placeholder="Search HH ID, grantee, PCN, TR..."
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                    className="w-full px-3 py-2  border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Encoded Status</label>
+                                <label className="block text-sm font-medium text-black mb-2">Encoded Status</label>
                                 <select
                                     value={filters.encoded}
                                     onChange={(e) => handleFilterChange('encoded', e.target.value)}
@@ -147,7 +147,7 @@ export function PcnTable() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                                <label className="block text-sm font-medium text-black mb-2">Username</label>
                                 <input
                                     type="text"
                                     value={filters.username}
@@ -158,7 +158,7 @@ export function PcnTable() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Date From</label>
+                                <label className="block text-sm font-medium text-black mb-2">Date From</label>
                                 <input
                                     type="date"
                                     value={filters.dateFrom}
@@ -168,7 +168,7 @@ export function PcnTable() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Date To</label>
+                                <label className="block text-sm font-medium text-black mb-2">Date To</label>
                                 <input
                                     type="date"
                                     value={filters.dateTo}
@@ -180,7 +180,7 @@ export function PcnTable() {
                             <div className="flex items-end">
                                 <button
                                     onClick={clearFilters}
-                                    className="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200"
+                                    className="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 text-black font-medium rounded-lg transition-colors duration-200"
                                 >
                                     Clear Filters
                                 </button>
@@ -196,13 +196,13 @@ export function PcnTable() {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">HH ID</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grantee</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PCN</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TR</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issue</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">HH ID</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Grantee</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">PCN</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">TR</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Issue</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Date</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -214,15 +214,15 @@ export function PcnTable() {
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            <span className="text-gray-500">Loading PCN records...</span>
+                                            <span className="text-black">Loading PCN records...</span>
                                         </div>
                                     </td>
                                 </tr>
                             ) : paginatedData.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="px-4 py-12 text-center">
-                                        <div className="text-gray-500">
-                                            <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div className="text-black">
+                                            <svg className="mx-auto h-12 w-12 text-black mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
                                             <p className="text-lg font-medium mb-1">No PCN records found</p>
@@ -233,12 +233,12 @@ export function PcnTable() {
                             ) : (
                                 paginatedData.map((item, index) => (
                                     <tr key={item.id} className={`hover:bg-gray-50 transition-colors duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
-                                        <td className="px-4 py-4 text-sm text-gray-900">
+                                        <td className="px-4 py-4 text-sm text-black">
                                             <div className="flex items-center gap-2">
                                                 <span className="font-medium">{item.hhId}</span>
                                                 <button
                                                     onClick={() => copyToClipboard(item.hhId)}
-                                                    className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors duration-200"
+                                                    className="p-1 text-black hover:text-black hover:bg-gray-100 rounded transition-colors duration-200"
                                                     title="Copy HH ID"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,15 +247,15 @@ export function PcnTable() {
                                                 </button>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4 text-sm text-gray-900 font-medium">{item.grantee}</td>
+                                        <td className="px-4 py-4 text-sm text-black font-medium">{item.grantee}</td>
                                         <td className="px-4 py-4 text-sm">
                                             <div className="flex items-center gap-2">
                                                 {item.pcn ? (
                                                     <div className="flex items-center gap-2">
-                                                        <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{item.pcn}</span>
+                                                        <span className="font-mono text-sm px-2 text-black py-1 rounded">{item.pcn}</span>
                                                         <button
                                                             onClick={() => copyToClipboard(item.pcn!)}
-                                                            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors duration-200"
+                                                            className="p-1 text-black hover:text-black hover:bg-gray-100 rounded transition-colors duration-200"
                                                             title="Copy PCN"
                                                         >
                                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -264,7 +264,7 @@ export function PcnTable() {
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPcnStatus(item.pcn).class}`}>
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs text-black font-medium ${getPcnStatus(item.pcn).class}`}>
                                                         {getPcnStatus(item.pcn).text}
                                                     </span>
                                                 )}
@@ -274,10 +274,10 @@ export function PcnTable() {
                                             <div className="flex items-center gap-2">
                                                 {item.tr ? (
                                                     <div className="flex items-center gap-2">
-                                                        <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{item.tr}</span>
+                                                        <span className="font-mono text-sm text-black px-2 py-1 rounded">{item.tr}</span>
                                                         <button
                                                             onClick={() => copyToClipboard(item.tr!)}
-                                                            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors duration-200"
+                                                            className="p-1 text-black hover:text-black hover:bg-gray-100 rounded transition-colors duration-200"
                                                             title="Copy TR"
                                                         >
                                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,14 +297,14 @@ export function PcnTable() {
                                                 {item.encoded}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-4 text-sm text-gray-900">
+                                        <td className="px-4 py-4 text-sm text-black">
                                             {item.issue ? (
                                                 <span className="text-red-600 bg-red-50 px-2 py-1 rounded text-xs">{item.issue}</span>
                                             ) : (
                                                 <span className="text-green-600 bg-green-50 px-2 py-1 rounded text-xs">No issues</span>
                                             )}
                                         </td>
-                                        <td className="px-4 py-4 text-sm text-gray-900">
+                                        <td className="px-4 py-4 text-sm text-black">
                                             {new Date(item.date).toLocaleDateString('en-US')}
                                         </td>
                                     </tr>
@@ -321,21 +321,21 @@ export function PcnTable() {
                             <button
                                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                 disabled={currentPage === 1}
-                                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-black bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Previous
                             </button>
                             <button
                                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                 disabled={currentPage === totalPages}
-                                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-black bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Next
                             </button>
                         </div>
                         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
-                                <p className="text-sm text-gray-700">
+                                <p className="text-sm text-black">
                                     Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
                                     <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> of{' '}
                                     <span className="font-medium">{filteredData.length}</span> results
@@ -346,7 +346,7 @@ export function PcnTable() {
                                     <button
                                         onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                         disabled={currentPage === 1}
-                                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <span className="sr-only">Previous</span>
                                         <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -367,7 +367,7 @@ export function PcnTable() {
                                                     onClick={() => setCurrentPage(pageNum)}
                                                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
                                                             ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                                                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                            : 'bg-white border-gray-300 text-black hover:bg-gray-50'
                                                         }`}
                                                 >
                                                     {pageNum}
@@ -378,7 +378,7 @@ export function PcnTable() {
                                             pageNum === currentPage + 2
                                         ) {
                                             return (
-                                                <span key={pageNum} className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                                <span key={pageNum} className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-black">
                                                     ...
                                                 </span>
                                             );
@@ -389,7 +389,7 @@ export function PcnTable() {
                                     <button
                                         onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                         disabled={currentPage === totalPages}
-                                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <span className="sr-only">Next</span>
                                         <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">

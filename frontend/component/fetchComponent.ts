@@ -10,14 +10,13 @@ const fetchRequest = async <T>(
 ): Promise<T> => {
   const state: RootState = store.getState();
   const user = state.user;
-
+  console.log("CSRF Token : ", user.csrf_token)
   const res = await fetch(url, {
     method,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-Token': user.csrf,
-      'Authorization': `Bearer ${user.access_token}`
+      'X-CSRF-Token': user.csrf_token,
     },
     body: body ? JSON.stringify(body) : undefined,
   });

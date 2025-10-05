@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
+import { CsrfGuard } from 'src/guard/csrf-guard';
 
-@UseGuards(JwtOrRefreshGuard)
+@UseGuards(JwtOrRefreshGuard,CsrfGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

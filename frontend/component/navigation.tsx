@@ -44,18 +44,11 @@ const TopNavbar = ({ onMenuToggle, isSidebarOpen }: TopNavbarProps) => {
 
         {/* Right section */}
         <div className="flex items-center space-x-3">
-          <button className="p-2 rounded-lg hover:bg-gray-100 relative">
-            <Bell size={20} className="text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-          <button className="p-2 rounded-lg hover:bg-gray-100">
-            <Mail size={20} className="text-gray-600" />
-          </button>
           <div className="flex items-center space-x-2 pl-2 border-l border-gray-200">
             <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
               <User size={16} className="text-white" />
             </div>
-            <span className="hidden md:block text-sm font-medium text-gray-700">{user.name}</span>
+            <span className="hidden md:block text-sm font-medium text-gray-700">{user.username}</span>
           </div>
         </div>
       </div>

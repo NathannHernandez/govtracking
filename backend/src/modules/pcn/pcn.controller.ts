@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
 import { PcnService } from './pcn.service';
 import { CreatePcnDto } from './dto/create-pcn.dto';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
+import { CsrfGuard } from 'src/guard/csrf-guard';
 
-@UseGuards(JwtOrRefreshGuard)
+@UseGuards(JwtOrRefreshGuard,CsrfGuard)
 @Controller('pcn')
 export class PcnController {
   constructor(private readonly pcnService: PcnService) { }

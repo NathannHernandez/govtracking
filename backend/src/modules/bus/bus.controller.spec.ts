@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BusController } from './bus.controller';
 import { BusService } from './bus.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext } from '@nestjs/common';
 

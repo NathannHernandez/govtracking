@@ -5,8 +5,8 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { Public } from '../../decorator/public.decorator';
 import type { Request, Response } from 'express';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
-
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
+import { CsrfGuard } from 'src/guard/csrf-guard';
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +17,7 @@ export class AuthController {
   getAll() {
     return this.authService.get()
   }
+
 
   @UseGuards(JwtOrRefreshGuard)
   @Get('check-auth')
@@ -56,7 +57,7 @@ export class AuthController {
     return token;
   }
 
-  //@UseGuards(JwtOrRefreshGuard)
+  @UseGuards(JwtOrRefreshGuard,CsrfGuard)
   @Get('logout')
   async logout( @Res() res: Response) {
     return this.authService.logout( res);

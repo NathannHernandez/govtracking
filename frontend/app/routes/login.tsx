@@ -18,7 +18,7 @@ export default function Home() {
           `${import.meta.env.VITE_BACKEND_API_URL}/v1/auth/check-auth-public`,
           {
             method: "GET",
-            credentials: "include", // Ensure cookies are sent with the request
+            credentials: "include", 
           }
         );
         if (response.ok) {

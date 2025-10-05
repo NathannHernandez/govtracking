@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Body, Req, Param, UseGuards, Query } from '@nestjs/common';
 import { SwdiService } from './swdi.service';
 import { CreateSwdiDto } from './dto/create-swdi.dto';
-import { JwtOrRefreshGuard } from '../../jwt/jwt-refresh-guard';
+import { JwtOrRefreshGuard } from '../../guard/jwt-refresh-guard';
 import type { Request } from 'express';
+import { CsrfGuard } from 'src/guard/csrf-guard';
 
-@UseGuards(JwtOrRefreshGuard)
+@UseGuards(JwtOrRefreshGuard,CsrfGuard)
 @Controller('swdi')
 export class SwdiController {
   constructor(private readonly swdiService: SwdiService) { }
